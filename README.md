@@ -4,7 +4,7 @@ BestNDS is a Notion dashboard for scheduling time and finishing work in one plac
 
 ## Start with an empty dashboard
 
-[Blank dashboard template](https://www.notion.so/41bc0d8363c38115a11dec15075b2904) — created without personal records or credentials. **Public duplication is pending owner publication.** Until the owner enables Share → Publish → Allow duplicate as template, this link may require workspace access. Do not duplicate the owner's personal dashboard. [Build the empty schema yourself](docs/setup.md) is available without template access.
+[Duplicate the blank BestNDS dashboard](https://app.notion.com/p/Kaden-s-BestNDS-Blank-Dashboard-41bc0d8363c38115a11dec15075b2904). Open the published template and choose **Duplicate** to create your own copy. It includes the formatted dashboard, an empty inline Schedule & Tasks database, task/completion views, and filtered calendars. No personal activities, records, feeds or credentials are included. [Build the empty schema yourself](docs/setup.md) is also available.
 
 ## Why one database?
 
