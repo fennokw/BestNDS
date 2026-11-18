@@ -15,7 +15,7 @@ Schedule & Tasks holds both time commitments and deadlines. Different views show
 | Name | Title | Human-readable item name |
 | Date | Date | Event start/end or task due date |
 | Type | Select: Event, Task | Time commitment versus work to finish |
-| Completed | Checkbox | Completion for tasks and events |
+| Completed | Checkbox | Completion for every Task kind; not applicable to events |
 | Task kind | Select; options below | Optional task category; never changes Type |
 | Event kind | Select; options below | Optional event category; never changes Type |
 | Setup check | Formula | Flags incompatible fields without hiding the item |
@@ -28,20 +28,20 @@ A task has no attendance commitment. Finish it by checking Completed, not by dec
 
 ## Types, kinds, and completion
 
-**Type is authoritative.** `Event + Completed checked + Task kind Homework` means a finished event, not homework. PODA ignores the inapplicable Task kind and reports a setup warning. Import Source Canvas only supplies a legacy task fallback when Type is empty; it never overrides an explicit Event. Completed is valid for either type and is independent of attendance intent.
+**Type is authoritative.** Every Task has the same Completed checkbox, whether its Task kind is Homework, Personal project, Messaging/contacting, another label, or empty. Homework has no special completion rules. Events do not have completion state. For `Event + Completed checked + Task kind Homework`, PODA ignores both inapplicable fields, keeps the record as an event and reports a setup warning. Import Source never overrides an explicit Type.
 
 | Type | Relevant detail | Completion | Inapplicable fields |
 | --- | --- | --- | --- |
 | Task | Task kind | Check when the work is done | Event kind, Commitment |
-| Event | Event kind, Commitment | Check when the event is finished | Task kind |
+| Event | Event kind, Commitment | Not applicable | Task kind, Completed |
 
 Task kind choices: **General, Homework, Test, Personal project, Project benchmark, Messaging/contacting, Errand, Administration, Research, Creative work, Other**. A project benchmark is a milestone or deliverable with a due date. Messaging/contacting covers an email, call, or follow-up you need to complete.
 
 Event kind choices: **General, Meeting, Appointment, Class/lesson, Practice/workout, Social, Travel, Focus time, Performance, Other**. Kinds are optional; leaving them empty does not prevent calendar display. Area describes the part of your life, while kind describes the activity.
 
-Notion's standard database editor permits manual combinations; hiding a property is not a validation lock. Use Task views (Task kind visible, attendance fields hidden) or Event views (Event kind visible, Task kind hidden). The read-only **Setup check** formula flags missing Type, an event with Task kind, or a task with Event kind/Commitment. It does not change dates or completion and is not a calendar filter.
+Notion's standard database editor permits manual combinations; hiding a property is not a validation lock. Use Task views (Completed and Task kind visible, Event kind and attendance fields hidden) or Event views (Event kind visible, Task kind and Completed hidden). Completed is not pinned in the shared page layout; check tasks off in a task view. The read-only **Setup check** formula flags missing Type, an event with Task kind or Completed checked, or a task with Event kind/Commitment. It does not change dates or completion and is not a calendar filter.
 
-The PODA update adds matching kind dropdowns, validates edits against the current Type and live select options before any write, and clears the former type's mapped fields when Type changes through its mapped update API. Existing inconsistent records remain readable and are not silently rewritten. A rejected edit gives a corrective message and writes nothing. A Type change made directly in Notion is flagged until you clear the old fields there.
+The PODA update adds matching kind dropdowns, validates edits against the current Type and live select options before any write, and clears the former type's mapped fields when Type changes through its mapped update API, including unchecking Completed when converting a task to an event. Existing inconsistent records remain readable and are not silently rewritten. A rejected edit gives a corrective message and writes nothing. A Type change made directly in Notion is flagged until you clear the old fields there.
 
 After adding Event kind and Setup check to an older copy, install the corresponding PODA update, refresh the Notion schema, and choose **Use Kaden's BestNDS** again. Existing mappings require review after schema changes; do this before using remote calendar writes. Custom mappings can map both kind fields independently. Older imports can leave kinds empty; no importer is required to invent an event category.
 
@@ -49,7 +49,7 @@ After adding Event kind and Setup check to an older copy, install the correspond
 
 - Calendar: every dated record, including history.
 - Tasks to do: Type Task and Completed unchecked, ordered by Date.
-- Completed: checked records, including events.
+- Completed tasks: Type Task and Completed checked, for all task kinds.
 - Committed / Maybe / Declined: Type Event filtered by Commitment.
 - Tasks calendar: unfinished tasks on their due dates.
 - All items: unfiltered records for maintenance.
@@ -78,7 +78,7 @@ Stable IDs prevent repeat imports from creating duplicates. Source snapshots all
 
 ## Migrating an older dashboard
 
-Add Completed and Task kind first. Copy each Homework/Test Type into Task kind, then set Type Task. Preserve old commitments in an optional hidden Legacy Commitment field before clearing them. Never infer completion from Maybe, Committed, or an expired due date. Keep old Type options and inclusive Task/Homework/Test filters temporarily while older importers are still running. Update importers before removing legacy options.
+Add Completed and Task kind first. Copy each Homework/Test Type into Task kind, then set Type Task. Preserve old commitments in an optional hidden Legacy Commitment field before clearing them. Never infer completion from Maybe, Committed, or an expired due date. Update old importers to write Type Task and Task kind Homework/Test, then remove legacy Homework/Test Type options once no rows use them. The final Type choices are only Event and Task; task views filter Type Task regardless of label.
 
 Preserve page IDs, relation IDs, external IDs, notes and existing view IDs. For entries with an empty Date and a mistakenly populated Source Date, copy the exact timestamp into Date after review; do not change time zones or guess a new recurrence. Do not overwrite a nonempty Date. Recheck calendar filters after repair.
 
