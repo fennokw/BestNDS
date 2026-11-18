@@ -16,13 +16,34 @@ Schedule & Tasks holds both time commitments and deadlines. Different views show
 | Date | Date | Event start/end or task due date |
 | Type | Select: Event, Task | Time commitment versus work to finish |
 | Completed | Checkbox | Completion for tasks and events |
-| Task kind | Select: General, Homework, Test | Optional detail; does not control visibility |
+| Task kind | Select; options below | Optional task category; never changes Type |
+| Event kind | Select; options below | Optional event category; never changes Type |
+| Setup check | Formula | Flags incompatible fields without hiding the item |
 | Commitment | Select: Committed, Maybe, No | Attendance intent, only for events |
 | Area | Multi-select | Optional life/work category; General is the neutral default |
 | Notes | Text | Useful context |
 | Import Source | Select: Manual, ICS, Canvas | Provenance |
 
 A task has no attendance commitment. Finish it by checking Completed, not by declining it. A past due date alone does not prove completion. An exam can be a task with Task kind Test; if you also need to reserve attendance time, create a separate Event deliberately.
+
+## Types, kinds, and completion
+
+**Type is authoritative.** `Event + Completed checked + Task kind Homework` means a finished event, not homework. PODA ignores the inapplicable Task kind and reports a setup warning. Import Source Canvas only supplies a legacy task fallback when Type is empty; it never overrides an explicit Event. Completed is valid for either type and is independent of attendance intent.
+
+| Type | Relevant detail | Completion | Inapplicable fields |
+| --- | --- | --- | --- |
+| Task | Task kind | Check when the work is done | Event kind, Commitment |
+| Event | Event kind, Commitment | Check when the event is finished | Task kind |
+
+Task kind choices: **General, Homework, Test, Personal project, Project benchmark, Messaging/contacting, Errand, Administration, Research, Creative work, Other**. A project benchmark is a milestone or deliverable with a due date. Messaging/contacting covers an email, call, or follow-up you need to complete.
+
+Event kind choices: **General, Meeting, Appointment, Class/lesson, Practice/workout, Social, Travel, Focus time, Performance, Other**. Kinds are optional; leaving them empty does not prevent calendar display. Area describes the part of your life, while kind describes the activity.
+
+Notion's standard database editor permits manual combinations; hiding a property is not a validation lock. Use Task views (Task kind visible, attendance fields hidden) or Event views (Event kind visible, Task kind hidden). The read-only **Setup check** formula flags missing Type, an event with Task kind, or a task with Event kind/Commitment. It does not change dates or completion and is not a calendar filter.
+
+The PODA update adds matching kind dropdowns, validates edits against the current Type and live select options before any write, and clears the former type's mapped fields when Type changes through its mapped update API. Existing inconsistent records remain readable and are not silently rewritten. A rejected edit gives a corrective message and writes nothing. A Type change made directly in Notion is flagged until you clear the old fields there.
+
+After adding Event kind and Setup check to an older copy, install the corresponding PODA update, refresh the Notion schema, and choose **Use Kaden's BestNDS** again. Existing mappings require review after schema changes; do this before using remote calendar writes. Custom mappings can map both kind fields independently. Older imports can leave kinds empty; no importer is required to invent an event category.
 
 ## Views and calendar behavior
 
@@ -45,7 +66,7 @@ Add the desired views to Notion Calendar and assign their colors there. Avoid di
 4. Review a real item in the mapping preview. The date field must read Date.
 5. Keep Notion selected as the active calendar provider and authorize the intended remote-chat or daily-run permissions.
 
-The preset uses Name, Date, Type, Completed, Task kind, Commitment, Area, Notes and Import Source. New events default to Event / Committed / General / Manual. Unspecified attendance and area are provisional, and PODA asks whether to change them. Explicit choices take priority.
+The preset uses Name, Date, Type, Completed, Task kind, Event kind, Commitment, Area, Notes and Import Source. New events default to Event / Committed / General / Manual. Unspecified attendance and area are provisional, and PODA asks whether to change them. Explicit choices take priority.
 
 [Download the mapping JSON](mappings/bestnds-v1.json). It contains property names and defaults, **no token, database ID, personal records or account settings**. Import validates against the currently connected database and saves a new version. Existing custom mapping controls and exports remain available; BestNDS is optional. Renaming mapped properties requires updating the mapping. Changing schema intentionally makes old mappings stale until reviewed.
 
