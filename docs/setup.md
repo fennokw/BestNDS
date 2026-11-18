@@ -9,3 +9,25 @@ Create the views listed in the README. Use Date for each calendar and Completed 
 For automatic imports, follow the Automation Hub setup to create Calendar Sources and Sync Runs, and add Calendar Source as a relation to Calendar Sources. Enter your own feed addresses and credentials; never copy another person's sources.
 
 Connect this database in PODA, then apply Kaden's BestNDS. Verify the mapping preview before authorizing unattended writes.
+
+## Type guidance formula
+
+Add **Event kind** as a select and **Setup check** as a formula. Use the options listed in the README. Set this formula (Completed applies only to tasks):
+
+```notion
+if(
+  empty(prop("Type")),
+  "Choose Type: Event or Task",
+  if(
+    prop("Type") == "Event",
+    if(or(not empty(prop("Task kind")), prop("Completed")), "Events: clear Task kind and uncheck Completed", ""),
+    if(
+      prop("Type") == "Task",
+      if(or(not empty(prop("Event kind")), not empty(prop("Commitment"))), "Tasks: clear Event kind and Commitment", ""),
+      "Choose Type: Event or Task"
+    )
+  )
+)
+```
+
+Show Setup check in All items and set it to hide when empty in the page layout. Show Task kind in task views and Event kind in event views. Show Completed only in task views; remove it from event and mixed views and from the shared page-layout pins. Check off tasks in Tasks to do or the task calendar. Completed tasks must filter Type Task and Completed checked. Notion does not block editing a hidden property; these views guide entry, while PODA validates its own writes. Use All items to correct a mismatched field. Keep Setup check out of calendar filters so a warning cannot make an event disappear.
